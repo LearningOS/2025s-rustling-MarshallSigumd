@@ -5,7 +5,6 @@
 // Execute `rustlings hint structs1` or use the `hint` watch subcommand for a
 // hint.
 
-
 struct ColorClassicStruct {
     // TODO: Something goes here
     red: i32,
@@ -39,7 +38,7 @@ mod tests {
     #[test]
     fn tuple_structs() {
         // TODO: Instantiate a tuple struct!
-        let green: ColorTupleStruct=  ColorTupleStruct(0, 255, 0);
+        let green: ColorTupleStruct = ColorTupleStruct(0, 255, 0);
 
         assert_eq!(green.0, 0);
         assert_eq!(green.1, 255);
@@ -49,7 +48,7 @@ mod tests {
     #[test]
     fn unit_structs() {
         // TODO: Instantiate a unit-like struct!
-        let unit_like_struct: UnitLikeStruct =UnitLikeStruct;
+        let unit_like_struct: UnitLikeStruct = UnitLikeStruct;
         let message: String = format!("{:?}s are fun!", unit_like_struct);
 
         assert_eq!(message, "UnitLikeStructs are fun!");
