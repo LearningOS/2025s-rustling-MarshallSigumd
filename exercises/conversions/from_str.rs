@@ -48,40 +48,29 @@ enum ParsePersonError {
 // you want to return a string error message, you can do so via just using
 // return `Err("my error message".into())`.
 
-impl From<&str> for Person {
-    fn from(s: &str) -> Person {
-        // 如果字符串为空，返回默认值
+impl FromStr for Person {
+    type Err = ParsePersonError;
+    fn from_str(s: &str) -> Result<Person, Self::Err> {
         if s.is_empty() {
-            return Person::default();
+            return Err(ParsePersonError::Empty);
         }
 
-        // 按逗号分隔字符串
         let parts: Vec<&str> = s.split(',').collect();
-
-        // 如果分隔后的部分少于 2，返回默认值
         if parts.len() != 2 {
-            return Person::default();
+            return Err(ParsePersonError::BadLen);
         }
 
-        // 提取名字和年龄
-        let name = parts[0].trim();
-        let age_str = parts[1].trim();
-
-        // 如果名字为空，返回默认值
+        let name = parts[0];
         if name.is_empty() {
-            return Person::default();
+            return Err(ParsePersonError::NoName);
         }
 
-        // 尝试解析年龄
-        if let Ok(age) = age_str.parse::<usize>() {
-            return Person {
-                name: name.to_string(),
-                age,
-            };
-        }
+        let age = parts[1].parse::<usize>().map_err(ParsePersonError::ParseInt)?;
 
-        // 如果解析年龄失败，返回默认值
-        Person::default()
+        Ok(Person {
+            name: name.to_string(),
+            age,
+        })
     }
 }
 
