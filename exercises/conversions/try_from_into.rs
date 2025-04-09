@@ -37,10 +37,25 @@ enum IntoColorError {
 // time, but the slice implementation needs to check the slice length! Also note
 // that correct RGB color values must be integers in the 0..=255 range.
 
+// 辅助函数：检查颜色值是否在有效范围内
+fn validate_color_value(value: i16) -> Result<u8, IntoColorError> {
+    if value >= 0 && value <= 255 {
+        Ok(value as u8)
+    } else {
+        Err(IntoColorError::IntConversion)
+    }
+}
+
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let (red, green, blue) = tuple;
+        Ok(Color {
+            red: validate_color_value(red)?,
+            green: validate_color_value(green)?,
+            blue: validate_color_value(blue)?,
+        })
     }
 }
 
@@ -48,6 +63,11 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        Ok(Color {
+            red: validate_color_value(arr[0])?,
+            green: validate_color_value(arr[1])?,
+            blue: validate_color_value(arr[2])?,
+        })
     }
 }
 
@@ -55,6 +75,15 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+        
+        Ok(Color {
+            red: validate_color_value(slice[0])?,
+            green: validate_color_value(slice[1])?,
+            blue: validate_color_value(slice[2])?,
+        })
     }
 }
 
